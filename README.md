@@ -38,3 +38,37 @@ $ docker exec -i -t h4b-local-run bash
 # コンテナから抜ける
 $ exit
 ```
+
+## 4. コンテナイメージを、ECR にアップロードする
+
+- ECRは画面からリポジトリ作成
+    - リポジトリ名は指示通り `h4b-ecs-helloworld`
+- URIをコピー
+- 手元でdocker build
+
+```bash
+$ docker build -t <リポジトリURI>/h4b-ecs-helloworld:0.0.1 .
+```
+
+- docker pushするためにAWS CLIで認証通しておく
+
+```bash
+
+$ aws --profile=private ecr get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin 144232864051.dkr.ecr.ap-northeast-1.amazonaws.com
+```
+
+- プッシュ
+
+```bash
+$ docker push 144232864051.dkr.ecr.ap-northeast-1.amazonaws.com/h4b-ecs-helloworld:0.0.1
+```
+
+AWSの管理画面でも丁寧なガイドが出るので、基本これに沿って進めればOK
+
+![push-command.png](./push-command.png)
+
+疑問
+
+✅docker tag 使わないでいけたけど、何が違う？
+
+→docker tagは既存イメージにエイリアスつけるイメージ
