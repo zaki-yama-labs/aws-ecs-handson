@@ -39,6 +39,30 @@ $ docker exec -i -t h4b-local-run bash
 $ exit
 ```
 
+### これをTerraformで管理する
+
+- import.tf を作る
+  - to は `aws_ecr_repository.service` 固定
+  - id はリポジトリ名
+  - ref. https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_repository#import
+
+```terraform
+import {
+  to = aws_ecr_repository.service
+  id = "h4b-ecs-helloworld"
+}
+```
+
+- 以下の順にコマンド実行
+
+```bash
+$ terraform init
+$ terraform plan -generate-config-out=generated.tf
+$ terraform apply
+```
+
+- [任意] `generated.tf` の内容は `main.tf` に移して、ファイルごと削除
+
 ## 4. コンテナイメージを、ECR にアップロードする
 
 - ECRは画面からリポジトリ作成
@@ -72,3 +96,11 @@ AWSの管理画面でも丁寧なガイドが出るので、基本これに沿�
 ✅docker tag 使わないでいけたけど、何が違う？
 
 →docker tagは既存イメージにエイリアスつけるイメージ
+
+### 作成したリポジトリをTerraform管理する
+
+### リポジトリにpushしたイメージは？Terraformで管理するものある？
+
+## 5. コンテナオーケストレーションの ECS を作成する
+
+## 6. コンテナの自動復旧、スケールアウトをやってみる
