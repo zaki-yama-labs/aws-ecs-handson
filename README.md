@@ -95,12 +95,43 @@ AWSの管理画面でも丁寧なガイドが出るので、基本これに沿�
 
 ✅docker tag 使わないでいけたけど、何が違う？
 
-→docker tagは既存イメージにエイリアスつけるイメージ
-
-### 作成したリポジトリをTerraform管理する
+→docker tagは既存イメージにエイリアスつけるイメージ。上記のコマンドだと
 
 ### リポジトリにpushしたイメージは？Terraformで管理するものある？
 
+これはできないはず。
+
+
 ## 5. コンテナオーケストレーションの ECS を作成する
+
+- ECS の主要な4つの要素
+  1. クラスター：コンテナを動かすための論理的なグループ
+  2. タスク定義：タスクを構成するコンテナ群定義
+  3. サービス：タスク実行コピー数を定義、ELBと連携、起動タイプを設定
+  4. タスク：タスク定義に基づき起動されるコンテナ群
+
+### 5.1 VPC の作成
+
+https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc#import
+
+```
+import {
+  to = aws_vpc.main
+  id = "vpc-0c2cd2bd3d93205ff"
+}
+```
+
+このエラーわからん
+
+```
+"ipv6_netmask_length": all of `ipv6_ipam_pool_id,ipv6_netmask_length` must be specified
+```
+
+### 5.2 ECS クラスターの作成
+
+### 5.3 タスク定義の作成
+
+### 5.4 サービスの作成
+
 
 ## 6. コンテナの自動復旧、スケールアウトをやってみる
