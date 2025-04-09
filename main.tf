@@ -11,6 +11,8 @@ provider "aws" {
   region = "ap-northeast-1"
 }
 
+data "aws_caller_identity" "current" {}
+
 resource "aws_ecr_repository" "service" {
   force_delete         = null
   image_tag_mutability = "MUTABLE"
@@ -94,5 +96,56 @@ resource "aws_ecs_cluster" "main" {
   setting {
     name  = "containerInsights"
     value = "disabled"
+  }
+}
+
+resource "aws_ecs_task_definition" "main" {
+  container_definitions = jsonencode([{
+    environment      = []
+    environmentFiles = []
+    essential        = true
+    image            = "${data.aws_caller_identity.current.account_id}.dkr.ecr.ap-northeast-1.amazonaws.com/h4b-ecs-helloworld:0.0.1"
+    logConfiguration = {
+      logDriver = "awslogs"
+      options = {
+        awslogs-create-group  = "true"
+        awslogs-group         = "/ecs/h4b-ecs-task-definition"
+        awslogs-region        = "ap-northeast-1"
+        awslogs-stream-prefix = "ecs"
+        max-buffer-size       = "25m"
+        mode                  = "non-blocking"
+      }
+      secretOptions = []
+    }
+    mountPoints = []
+    name        = "apache-helloworld"
+    portMappings = [{
+      appProtocol   = "http"
+      containerPort = 80
+      hostPort      = 80
+      name          = "apache-helloworld-80-tcp"
+      protocol      = "tcp"
+    }]
+    systemControls = []
+    ulimits        = []
+    volumesFrom    = []
+  }])
+  cpu                      = "1024"
+  enable_fault_injection   = false
+  execution_role_arn       = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ecsTaskExecutionRole"
+  family                   = "h4b-ecs-task-definition"
+  ipc_mode                 = null
+  memory                   = "3072"
+  network_mode             = "awsvpc"
+  pid_mode                 = null
+  requires_compatibilities = ["FARGATE"]
+  skip_destroy             = null
+  tags                     = {}
+  tags_all                 = {}
+  task_role_arn            = null
+  track_latest             = false
+  runtime_platform {
+    cpu_architecture        = "X86_64"
+    operating_system_family = "LINUX"
   }
 }

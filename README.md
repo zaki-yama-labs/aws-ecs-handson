@@ -135,6 +135,23 @@ https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecs_
 
 ### 5.3 タスク定義の作成
 
+https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecs_task_definition#import
+
+#### image のところにAWSアカウントIDが埋め込まれてしまうので再利用できないんだが？？
+
+A. aws_caller_identity を使う。
+ついでに jsonencode より templatefile で中身はJSONファイルに切り出したほうがいい
+
+#### やべ、AWSアカウントID一回コミットしちゃった...
+
+※ 実際にはしてなかった
+
+A. 機密情報ではない
+
+[AWS アカウント 識別子の表示 - AWS アカウント管理](https://docs.aws.amazon.com/ja_jp/accounts/latest/reference/manage-acct-identifiers.html)
+
+> アカウント ID は、他の識別情報と同様に、慎重に使用および共有する必要がありますが、秘密情報、センシティブ情報、または機密情報とは見なされません。
+
 ### 5.4 サービスの作成
 
 

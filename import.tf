@@ -17,3 +17,8 @@ import {
   to = aws_ecs_cluster.main
   id = "h4b-ecs-cluster"
 }
+
+import {
+  to = aws_ecs_task_definition.main
+  id = "arn:aws:ecs:ap-northeast-1:${data.aws_caller_identity.current.account_id}:task-definition/h4b-ecs-task-definition:1"
+}
