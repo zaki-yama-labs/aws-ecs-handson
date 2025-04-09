@@ -127,6 +127,8 @@ import {
 "ipv6_netmask_length": all of `ipv6_ipam_pool_id,ipv6_netmask_length` must be specified
 ```
 
+該当のプロパティを削除した。
+
 ### 5.2 ECS クラスターの作成
 
 ### 5.3 タスク定義の作成
