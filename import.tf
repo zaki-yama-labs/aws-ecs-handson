@@ -12,3 +12,8 @@ import {
   to = aws_security_group.elb_sg
   id = "sg-082f10f24a48912bb"
 }
+
+import {
+  to = aws_ecs_cluster.main
+  id = "h4b-ecs-cluster"
+}

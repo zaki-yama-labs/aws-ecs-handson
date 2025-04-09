@@ -86,3 +86,13 @@ resource "aws_security_group" "elb_sg" {
   revoke_rules_on_delete = false
   vpc_id                 = aws_vpc.main.id
 }
+
+resource "aws_ecs_cluster" "main" {
+  name     = "h4b-ecs-cluster"
+  tags     = {}
+  tags_all = {}
+  setting {
+    name  = "containerInsights"
+    value = "disabled"
+  }
+}

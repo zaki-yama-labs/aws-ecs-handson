@@ -131,6 +131,8 @@ import {
 
 ### 5.2 ECS クラスターの作成
 
+https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecs_cluster#import
+
 ### 5.3 タスク定義の作成
 
 ### 5.4 サービスの作成
