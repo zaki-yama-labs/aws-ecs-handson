@@ -89,7 +89,7 @@ $ docker push 144232864051.dkr.ecr.ap-northeast-1.amazonaws.com/h4b-ecs-hellowor
 
 AWSの管理画面でも丁寧なガイドが出るので、基本これに沿って進めればOK
 
-![push-command.png](./push-command.png)
+![push-command.png](./images/push-command.png)
 
 疑問
 
@@ -153,6 +153,45 @@ A. 機密情報ではない
 > アカウント ID は、他の識別情報と同様に、慎重に使用および共有する必要がありますが、秘密情報、センシティブ情報、または機密情報とは見なされません。
 
 ### 5.4 サービスの作成
+
+https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecs_service
+
+ロードバランシング、いろいろわからん
+
+> ロードバランシングリソースの VPC は、awsvpc を使用するサービスの VPC と同じである必要があります。
+
+ターゲットグループとは？
+
+> ネットワーキングの選択欄はデフォルトのまま。
+
+とあるが、h4b-ecs-vpc が選択されていなかったため修正が必要だった。
+
+#### デプロイに失敗する
+
+![](./images/deploy-error.png)
+
+サービスのログを見ると、
+
+```
+exec /bin/sh: exec format error
+```
+
+というエラーが発生している。
+
+![](./images/exec-format-error.png)
+
+**原因**  
+Apple Silicon (M1/M2) Mac等のARM環境でビルドしたDockerイメージをECS（X86_64環境）にデプロイすると、上記のエラーが発生する場合がある。
+これは、ビルドされたイメージのアーキテクチャとECS実行環境のアーキテクチャが一致していないことが原因。
+
+**解決方法**  
+Dockerfileの最初の行で、明示的にプラットフォームを指定する。
+
+```dockerfile
+FROM --platform=linux/amd64 ubuntu:18.04
+```
+
+Dockerイメージを再ビルド、ECRにプッシュする。
 
 
 ## 6. コンテナの自動復旧、スケールアウトをやってみる
