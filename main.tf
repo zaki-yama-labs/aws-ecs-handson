@@ -47,6 +47,50 @@ resource "aws_vpc" "main" {
   }
 }
 
+resource "aws_subnet" "h4b-ecs-subnet-public1-ap-northeast-1a" {
+  assign_ipv6_address_on_creation                = false
+  availability_zone                              = "ap-northeast-1a"
+  cidr_block                                     = "10.0.0.0/20"
+  customer_owned_ipv4_pool                       = null
+  enable_dns64                                   = false
+  enable_resource_name_dns_a_record_on_launch    = false
+  enable_resource_name_dns_aaaa_record_on_launch = false
+  ipv6_cidr_block                                = null
+  ipv6_native                                    = false
+  map_public_ip_on_launch                        = false
+  outpost_arn                                    = null
+  private_dns_hostname_type_on_launch            = "ip-name"
+  tags = {
+    Name = "h4b-ecs-subnet-public1-ap-northeast-1a"
+  }
+  tags_all = {
+    Name = "h4b-ecs-subnet-public1-ap-northeast-1a"
+  }
+  vpc_id = "vpc-0c2cd2bd3d93205ff"
+}
+
+resource "aws_subnet" "h4b-ecs-subnet-public1-ap-northeast-1c" {
+  assign_ipv6_address_on_creation                = false
+  availability_zone                              = "ap-northeast-1c"
+  cidr_block                                     = "10.0.16.0/20"
+  customer_owned_ipv4_pool                       = null
+  enable_dns64                                   = false
+  enable_resource_name_dns_a_record_on_launch    = false
+  enable_resource_name_dns_aaaa_record_on_launch = false
+  ipv6_cidr_block                                = null
+  ipv6_native                                    = false
+  map_public_ip_on_launch                        = false
+  outpost_arn                                    = null
+  private_dns_hostname_type_on_launch            = "ip-name"
+  tags = {
+    Name = "h4b-ecs-subnet-public2-ap-northeast-1c"
+  }
+  tags_all = {
+    Name = "h4b-ecs-subnet-public2-ap-northeast-1c"
+  }
+  vpc_id = "vpc-0c2cd2bd3d93205ff"
+}
+
 resource "aws_security_group" "elb_sg" {
   description = "default VPC security group"
   egress = [{
@@ -147,5 +191,60 @@ resource "aws_ecs_task_definition" "main" {
   runtime_platform {
     cpu_architecture        = "X86_64"
     operating_system_family = "LINUX"
+  }
+}
+
+resource "aws_ecs_service" "main" {
+  availability_zone_rebalancing      = "ENABLED"
+  cluster                            = "arn:aws:ecs:ap-northeast-1:144232864051:cluster/h4b-ecs-cluster"
+  deployment_maximum_percent         = 200
+  deployment_minimum_healthy_percent = 100
+  desired_count                      = 2
+  enable_ecs_managed_tags            = true
+  enable_execute_command             = false
+  force_delete                       = null
+  force_new_deployment               = null
+  health_check_grace_period_seconds  = 0
+  iam_role                           = "/aws-service-role/ecs.amazonaws.com/AWSServiceRoleForECS"
+  launch_type                        = null
+  name                               = "h4b-ecs-service"
+  platform_version                   = "LATEST"
+  propagate_tags                     = "NONE"
+  scheduling_strategy                = "REPLICA"
+  tags                               = {}
+  tags_all                           = {}
+  task_definition                    = "h4b-ecs-task-definition:1"
+  triggers                           = {}
+  wait_for_steady_state              = null
+  alarms {
+    alarm_names = []
+    enable      = false
+    rollback    = false
+  }
+  capacity_provider_strategy {
+    base              = 0
+    capacity_provider = "FARGATE"
+    weight            = 1
+  }
+  deployment_circuit_breaker {
+    enable   = true
+    rollback = true
+  }
+  deployment_controller {
+    type = "ECS"
+  }
+  load_balancer {
+    container_name   = "apache-helloworld"
+    container_port   = 80
+    elb_name         = null
+    target_group_arn = "arn:aws:elasticloadbalancing:ap-northeast-1:${data.aws_caller_identity.current.account_id}:targetgroup/h4b-ecs-targetgroup/4a4ea8beed663162"
+  }
+  network_configuration {
+    assign_public_ip = true
+    security_groups  = [aws_security_group.elb_sg.id]
+    subnets = [
+      aws_subnet.h4b-ecs-subnet-public1-ap-northeast-1a.id,
+      aws_subnet.h4b-ecs-subnet-public1-ap-northeast-1c.id
+    ]
   }
 }

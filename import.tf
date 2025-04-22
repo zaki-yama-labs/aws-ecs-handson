@@ -22,3 +22,21 @@ import {
   to = aws_ecs_task_definition.main
   id = "arn:aws:ecs:ap-northeast-1:${data.aws_caller_identity.current.account_id}:task-definition/h4b-ecs-task-definition:1"
 }
+
+import {
+  to = aws_ecs_service.main
+  id = "h4b-ecs-cluster/h4b-ecs-service"
+}
+
+import {
+  to = aws_subnet.h4b-ecs-subnet-public1-ap-northeast-1a
+  id = "subnet-0beab921fa72d1f0e"
+}
+
+import {
+  to = aws_subnet.h4b-ecs-subnet-public1-ap-northeast-1c
+  id = "subnet-071971428d2038ca7"
+}
+
+
+
