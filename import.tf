@@ -38,5 +38,7 @@ import {
   id = "subnet-071971428d2038ca7"
 }
 
-
-
+import {
+  to = aws_lb.h4b-ecs-alb
+  id = "arn:aws:elasticloadbalancing:ap-northeast-1:144232864051:loadbalancer/app/h4b-ecs-alb/1ee9557a7c923c4a"
+}
